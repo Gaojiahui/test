@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>涨停研究</title>
+<script>var hccmsconfig={"channel":0,"deptid":0,"activityid":23,"scenetype":3,"title":"涨停研究","actiontype":1}</script>
+    <link href="https://img.cdn.dn8188.com/skin/css/Common.css?pnf=202205171648" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://img.cdn.dn8188.com/skin/js/jquery.min.js?pnf=202205171648"></script>
+    <script type="text/javascript" src="https://img.cdn.dn8188.com/skin/js/jquery.cookie.js?pnf=202205171648"></script>
+    <script type="text/javascript" src="https://img.cdn.dn8188.com/code/sdk.3.1.js?pnf=202205171648"></script>
+    <script type="text/javascript" src="https://img.cdn.dn8188.com/code/sdk.news.3.0.js?pnf=202205171648"></script>
+    <script type='text/javascript' src="https://img.cdn.dn8188.com/skin/layer/layer.js?pnf=202205171648"></script>
+    <script src="https://img.cdn.dn8188.com/skin/laydate/v5.0.9/laydate.js?pnf=202205171648"></script>
+    <link href="https://img.cdn.dn8188.com/skin/laydate/v5.0.9/laydate.min.css?pnf=202205171648" rel="stylesheet" type="text/css" />
+    <style>
+        html {
+            font-size: 20px;
+        }
+
+        body {
+            background-color: #191b1f;
+        }
+    </style>
+    <script type="text/javascript">
+        (function (doc, win) {
+            var docEl = doc.documentElement,
+              resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+              recalc = function () {
+                  var clientWidth = docEl.clientWidth;
+                  if (!clientWidth) return;
+                  if (clientWidth > 750) clientWidth = 1000;
+                  docEl.style.fontSize = (clientWidth / 50) + 'px';
+              };
+
+            if (!doc.addEventListener) return;
+            win.addEventListener(resizeEvt, recalc, false);
+            doc.addEventListener('DOMContentLoaded', recalc, false);
+
+        })(document, window);
+    </script>
+    <script type="text/javascript">
+        var id = 44;
+        var sqltype = 1;
+        $(function () {
+            hccms.init.auth(null, returnFunc);
+        });
+
+        function returnFunc(e) {
+            GetContent("");
+            laydate.render({
+                elem: '.collaydate'
+               , eventElem: '.dateclick'
+                , theme: "pop"
+               , btns: [
+                 "now"
+               ]
+               , done: function (value, date) {
+                   var week = (new Date(date.year + "/" + date.month + "/" + date.date + " 00:00:00")).getDay()
+                   if (week >= 1 && week <= 5) {
+                       GetContent(JSON.stringify({ "st": date.year + "/" + date.month + "/" + date.date + " 00:00:00", "et": date.year + "/" + date.month + "/" + date.date + " 23:59:59" }));
+                   } else {
+                       layer.alert("周末没有数据更新");
+                       $('.collaydate').html($('.collaydate').attr("rel"));
+                   }
+               }
+            });
+
+            $('.procmobile').live("click", function () {
+                // hccms.procmobile.win({ smsclassid: 2, smsclassidmd5: "e250c0b78fef9fc740149cb6e327506a" }, { info: "输入手机号马上激活即可享受更多免费特权" });
+                window.location.href = "/activity/00000588.html";
+            });
+        }
+
+        function GetContent(keywords) {
+            hccms.api.GetNewsContent(keywords, id, sqltype, function (item) {
+                if (item && item != null && item != "") {
+                    $('.collaydate').html(hccms.methods.date.format(item.ctime, 'yyyy-MM-dd'));
+                    $('.collaydate').attr("rel", hccms.methods.date.format(item.ctime, 'yyyy-MM-dd'));
+                    hccms.post.NewsInteract(0, item.id, null)
+                    $(".Title").html(item.title);
+                    $(".author").html("懂牛");
+                    $(".cTime").html(hccms.methods.date.format(item.ctime, 'yyyy-MM-dd hh:mm'));
+                    
+					 //场景-资讯：3，事件-看：4
+                    hccms.tajs.action3({ scenetype: '3', sceneid: item.id, eventid: 4, eventmemo: item.title, others: item.classid });
+
+                    $(".hits").html(item.hits);
+                    var Content = ReplacStyle(item.content);
+                    if (item.rigrttype === 1) {
+                        Content += '<div  class=procmobile style="cursor:pointer;background:url(https://img.cdn.dn8188.com/activity/23/images/noright.jpg?pnf=202205171648) top center no-repeat; display:block; height:451px; margin:10px auto;"></div>';
+                    }
+                    $(".Content").html(Content);
+                } else {
+
+                    $(".Content").html("当天没有文章发布");
+                }
+            });
+        }
+
+        function ReplacStyle(Content, type) {
+            if (Content == "" || Content == null) return Content;
+            Content = Content.replace(/style\s*?=\s*?(['"])[\s\S]*?\1/g, '');
+            Content = Content.replace(/\/\/img/g, 'https://img');
+            return Content;
+        }
+    </script>
+
+
+    <style>
+        body {
+            background-color: #191b1f;
+            color: #6e7888;
+            font-size: 0.8rem;
+            font-size: "微软雅黑";
+        }
+
+        /*滚动条样式*/
+        ::-webkit-scrollbar { /*滚动条整体样式*/
+            width: 0.5rem; /*高宽分别对应横竖滚动条的尺寸*/
+            height: 0.5rem;
+        }
+
+        ::-webkit-scrollbar-thumb { /*滚动条里面小方块*/
+            border-radius: 0.2rem;
+            -webkit-box-shadow: inset 0 0 0.2rem rgba(181,179,179,0.8);
+            background: rgba(0,0,0,0.2);
+        }
+
+        ::-webkit-scrollbar-track { /*滚动条里面轨道*/
+            -webkit-box-shadow: inset 0 0 0.2rem rgba(181,179,179,0.8);
+            border-radius: 0;
+            background: rgba(0,0,0,0.1);
+        }
+
+        a {
+        }
+
+            A:hover {
+                text-decoration: none;
+            }
+
+        .wrap {
+            position: relative;
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 1000px;
+            background-color: #1e2126;
+        }
+
+        .player {
+            position: relative;
+        }
+
+            .player .midnlist {
+                position: absolute;
+                right: 1rem;
+                top: 4.2rem;
+                z-index: 1000000;
+            }
+
+            .player .Title {
+                font-size: 1.2rem;
+                display: block;
+                font-weight: bolder;
+                padding: 0 20px;
+                color: #dddddd;
+                line-height: 3.5rem;
+            }
+
+            .player .info {
+                font-size: 14px;
+                color: #999999;
+                padding: 0 2rem;
+            }
+
+                .player .info .l {
+                    width: 50%;
+                    float: left;
+                    clear: left;
+                    height: 0.7rem;
+                }
+
+                    .player .info .l span {
+                        padding-right: 0.5rem;
+                    }
+
+                .player .info .r {
+                    width: 14rem;
+                    float: right;
+                    clear: right;
+                    overflow: hidden;
+                }
+
+        .clear {
+            display: block;
+            height: 0.5rem;
+            clear: both;
+        }
+
+        .player .Content {
+            padding: 1rem;
+            line-height: 1.4rem;
+            min-height: 600px;
+        }
+
+            .player .Content strong {
+                color: #ff0000;
+            }
+
+            .player .Content img {
+                margin: 0.5rem auto;
+                display: block;
+                max-width: 95%;
+            }
+
+        .player .alset {
+            line-height: 1rem;
+            font-size: 0.8rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .player .mid {
+            height: 1.4rem;
+            line-height: 1.4rem;
+        }
+
+            .player .mid .log {
+                float: left;
+                font-size: 0.8rem;
+                font-family: MicrosoftYaHei;
+                font-weight: 400;
+                color: rgba(147,153,163,1);
+                /*margin-left: 25px;
+                        margin-right: 10px;*/
+                background-color: #22242a;
+                padding: 0 0.75rem;
+            }
+
+            .player .mid .dateicon {
+                background: #606477;
+                width: 1.55rem;
+                height: 1.4rem;
+                float: left;
+                text-align: center;
+            }
+
+                .player .mid .dateicon img {
+                    padding: 0.3rem;
+                }
+
+            .player .mid .collaydate {
+                background: #6E7286;
+                width: 4.7rem;
+                height: 1.4rem;
+                float: left;
+                text-align: center;
+                color: #FFFFFF;
+                cursor: pointer;
+            }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="player">
+            <!--<div class="midnlist">
+                          <ul></ul>
+                      </div>-->
+            <div class="Title"></div>
+            <div class="info">
+                <div class=l>
+                    <span class="author"></span><span class="cTime"></span>
+                    <!--阅读量：<span class="hits"></span>-->
+                </div>
+                <div class=r>
+                    <div class="mid">
+                        <div class="log">查看往期</div>
+                        <div class="dateicon"><img src="https://img.cdn.dn8188.com/activity/20/images/time_icon.png?pnf=201901040949" alt="" class="dateclick" /></div>
+                        <div class="collaydate" rel=""></div>
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <div class="clear"></div>
+            <div class="Content"></div>
+            <div class="alset">免责声明：本产品内发布的信息，目的在于传播更多信息，与本终端立场无关。本产品不保证该信息（包括但不限于文字、数据及图表）全部或者部分内容的准确性、真实性、宪整性、有效性、及时性、原创性等。相关信息并未经过本终端证实，不对您构成任何投资建议，据此操作，风险自担。股市有风险，投资需谨慎。北京东方高圣投资顾问有限公司执证编号：0110。</div>
+        </div>
+    </div>
+
+
+</body>
+</html>
